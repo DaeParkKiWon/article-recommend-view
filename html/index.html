@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 기사 분석 및 여론 파악</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/home.css">
+</head>
+<body>
+  <!-- 히어로 섹션 -->
+  <div class="hero-section">
+    <div class="container">
+      <h1>AI 기사 분석 및 여론 파악</h1>
+      <p>키워드를 선택하면 AI가 관련 기사를 스크랩하고 요약하여 여론 동향을 분석해 드립니다.</p>
+      <div class="button-group">
+        <button class="button primary" onclick="scrollToKeywords()">키워드 선택하기</button>
+        <button class="button outline" onclick="location.href='about.html'">서비스 소개</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 키워드 선택 섹션 -->
+  <div class="container">
+    <h2 class="section-title">키워드를 선택하여 AI 기사 분석 시작하기</h2>
+    <div class="card" id="keyword-section">
+      <div class="card-section">
+        <h3>선택된 키워드</h3>
+        <div id="selected-keywords" class="keyword-list">
+          <p class="empty-message">키워드는 1개만 선택할 수 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="card-section">
+        <h3>인기 키워드</h3>
+        <div id="popular-keywords" class="keyword-list">
+          <!-- JavaScript로 채워짐 -->
+        </div>
+      </div>
+
+      <!-- <div class="card-section">
+        <h3>직접 입력</h3>
+        <div class="input-group">
+          <input type="text" id="custom-keyword" placeholder="키워드 입력" onkeydown="handleKeyDown(event)">
+          <button class="button primary" onclick="addCustomKeyword()">추가</button>
+        </div>
+      </div> -->
+
+      <button id="analysis-button" class="button primary full-width" onclick="startAnalysis()" disabled>
+        기사 분석 시작하기
+      </button>
+    </div>
+  </div>
+
+  <script src="../scripts/common.js"></script>
+  <script src="../scripts/home.js"></script>
+</body>
+</html>

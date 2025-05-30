@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>분석 결과 - AI 기사 분석 및 여론 파악</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/analysis.css">
+</head>
+<body>
+  <div class="container">
+    <button class="back-button" onclick="location.href='index.html'">
+      ← 다시 검색하기
+    </button>
+
+    <div class="page-header">
+      <h1>분석 결과</h1>
+      <div id="result-keywords" class="tag-list">
+        <!-- JavaScript로 채워짐 -->
+      </div>
+    </div>
+
+    <div id="loading-indicator" class="loading">
+      <div class="spinner"></div>
+      <p>분석 중입니다...</p>
+    </div>
+
+    <div id="analysis-results" class="results-container">
+      <!-- 기사 요약 섹션 -->
+      <div class="card">
+        <h2>주요 기사 요약</h2>
+        <div id="article-summaries" class="article-list">
+          <!-- JavaScript로 채워짐 -->
+        </div>
+      </div>
+
+      <!-- 핵심 인사이트 섹션 -->
+      <div class="card">
+        <h2>핵심 인사이트</h2>
+        <div id="key-insights" class="insights-list">
+          <!-- JavaScript로 채워짐 -->
+        </div>
+      </div>
+
+      <!-- 여론 분석 섹션 -->
+      <div class="card">
+        <h2>여론 분석</h2>
+        <div class="sentiment-grid">
+          <div class="sentiment-box positive">
+            <div class="percentage">65%</div>
+            <div class="label">긍정적 의견</div>
+          </div>
+          <div class="sentiment-box neutral">
+            <div class="percentage">25%</div>
+            <div class="label">중립적 의견</div>
+          </div>
+          <div class="sentiment-box negative">
+            <div class="percentage">10%</div>
+            <div class="label">부정적 의견</div>
+          </div>
+        </div>
+        <div class="sentiment-chart-container">
+          <h3>여론 분포</h3>
+          <div class="sentiment-chart">
+            <div class="bar positive" style="width: 65%">65%</div>
+            <div class="bar neutral" style="width: 25%">25%</div>
+            <div class="bar negative" style="width: 10%">10%</div>
+          </div>
+          <div class="chart-labels">
+            <span>긍정적</span>
+            <span>중립적</span>
+            <span>부정적</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../scripts/common.js"></script>
+  <script src="../scripts/analysis.js"></script>
+</body>
+</html>
