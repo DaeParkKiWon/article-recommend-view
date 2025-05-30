@@ -4,7 +4,7 @@ const API_CONFIG = {
   ENDPOINTS: {
     ARTICLE_SUMMARY: '/api/summaries',
     SENTIMENT_ANALYSIS: '/api/summaries', // 동일한 엔드포인트 사용
-    KEYWORDS: '/keywords/today'  // 키워드 API 엔드포인트 수정
+    KEYWORDS: '/api/keywords/today'  // 키워드 API 엔드포인트 수정
   }
 };
 

@@ -28,7 +28,7 @@ function toggleKeyword(keyword) {
     if (selectedKeywords.length < 1) {
       selectedKeywords.push(keyword);
     } else {
-      alert("키워드는 최대 1개까지 선택할 수 있습니다.");
+      alert("키워드는 1개만 선택할 수 있습니다.");
       return;
     }
   }
@@ -46,7 +46,7 @@ function updateSelectedKeywords() {
   if (selectedKeywords.length === 0) {
     const emptyMessage = document.createElement("p");
     emptyMessage.className = "empty-message";
-    emptyMessage.textContent = "키워드를 최대 1개까지 선택해주세요";
+    emptyMessage.textContent = "키워드를 1개 선택해주세요";
     container.appendChild(emptyMessage);
   } else {
     selectedKeywords.forEach(keyword => {
@@ -78,39 +78,6 @@ function updateAnalysisButton() {
   const button = document.getElementById("analysis-button");
   button.disabled = selectedKeywords.length === 0;
 }
-
-// 커스텀 키워드 추가
-// function addCustomKeyword() {
-//   const input = document.getElementById("custom-keyword");
-//   const keyword = input.value.trim();
-  
-//   if (!keyword) return;
-  
-//   if (selectedKeywords.includes(keyword)) {
-//     alert("이미 선택된 키워드입니다.");
-//     return;
-//   }
-  
-//   if (selectedKeywords.length >= 1) {
-//     alert("키워드는 최대 1개까지 선택할 수 있습니다.");
-//     return;
-//   }
-  
-//   selectedKeywords.push(keyword);
-//   input.value = "";
-  
-//   updateSelectedKeywords();
-//   updatePopularKeywords();
-//   updateAnalysisButton();
-// }
-
-// 키 입력 처리
-// function handleKeyDown(event) {
-//   if (event.key === "Enter") {
-//     event.preventDefault();
-//     addCustomKeyword();
-//   }
-// }
 
 // 키워드 섹션으로 스크롤
 function scrollToKeywords() {

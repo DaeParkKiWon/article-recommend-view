@@ -123,15 +123,26 @@ function generateArticleSummaries(articleData) {
     <div class="article-meta">
       <span class="source">관련 기사 링크</span>
     </div>
-    <div class="article-links">
-      ${articleData.postUrl.split('\n').map(url => `
-        <a href="${url}" class="article-link" target="_blank" rel="noopener noreferrer">
-          ${url} ↗
-        </a>
-      `).join('<br>')}
-    </div>
   `;
   container.appendChild(summaryElement);
+
+  // 핵심 인사이트에 관련 기사 링크 추가
+  const insightsContainer = document.getElementById("key-insights");
+  insightsContainer.innerHTML = "";
+  
+  articleData.postUrl.split('\n').forEach(url => {
+    const insightElement = document.createElement("div");
+    insightElement.className = "insight";
+    insightElement.innerHTML = `
+      <div class="insight-icon">📰</div>
+      <p class="insight-text">
+        <a href="${url}" class="article-links" target="_blank" rel="noopener noreferrer">
+          ${url} ↗
+        </a>
+      </p>
+    `;
+    insightsContainer.appendChild(insightElement);
+  });
 }
 
 // 여론 분석 업데이트
@@ -162,32 +173,5 @@ function updateSentimentAnalysis(sentimentData) {
   }
 }
 
-// 인사이트 생성
-function generateInsights(keywords) {
-  const container = document.getElementById("key-insights");
-  container.innerHTML = "";
-  
-  let allInsights = [];
-  
-  // 선택된 키워드에 대한 인사이트 수집
-  keywords.forEach(keyword => {
-    if (MOCK_DATA[keyword]) {
-      allInsights = allInsights.concat(MOCK_DATA[keyword].insights);
-    } else {
-      // 기본 데이터
-      allInsights.push(`${keyword} 기술은 지속적으로 발전하고 있습니다.`);
-      allInsights.push(`${keyword}에 대한 투자가 증가하고 있습니다.`);
-    }
-  });
-  
-  // 인사이트 렌더링
-  allInsights.forEach(insight => {
-    const insightElement = document.createElement("div");
-    insightElement.className = "insight";
-    insightElement.innerHTML = `
-      <div class="insight-icon">💡</div>
-      <p class="insight-text">${insight}</p>
-    `;
-    container.appendChild(insightElement);
-  });
-}
+// 인사이트 생성 함수는 더 이상 필요하지 않으므로 제거하거나 주석 처리
+// function generateInsights(keywords) { ... }
