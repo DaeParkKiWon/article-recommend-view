@@ -1,22 +1,12 @@
 // 전역 변수
-const POPULAR_KEYWORDS = [
-  "인공지능",
-  "메타버스",
-  "블록체인",
-  "자율주행",
-  "로봇",
-  "가상현실",
-  "증강현실",
-  "디지털 트랜스포메이션",
-  "사이버 보안",
-  "클라우드 컴퓨팅",
-  "빅데이터",
-  "머신러닝",
-  "NFT",
-  "양자컴퓨팅",
-];
-
+let POPULAR_KEYWORDS = [];  // 빈 배열로 초기화
 let selectedKeywords = [];
+
+// API URL 정의 추가
+const API_URLS = {
+  KEYWORDS: 'https://api.example.com/keywords',
+  ARTICLE_SUMMARY: 'https://api.example.com/article-summary'
+};
 
 // 샘플 데이터
 const MOCK_DATA = {
@@ -80,9 +70,18 @@ const MOCK_DATA = {
 document.addEventListener("DOMContentLoaded", async function() {
   try {
     // 인기 키워드 가져오기
-    const keywords = await fetchKeywords();
-    if (keywords) {
-      POPULAR_KEYWORDS = keywords;
+    const response = await fetch(API_URLS.KEYWORDS);
+    if (!response.ok) throw new Error('키워드 API 요청 실패');
+    
+    const data = await response.json();
+    if (data && data.keywords) {
+      POPULAR_KEYWORDS = data.keywords;
+      
+      // 날짜 표시 업데이트
+      const dateElement = document.getElementById("keyword-date");
+      if (dateElement) {
+        dateElement.textContent = `${data.date} 기준`;
+      }
     }
     
     initializeKeywords();
@@ -90,6 +89,18 @@ document.addEventListener("DOMContentLoaded", async function() {
   } catch (error) {
     console.error('키워드 로딩 중 에러 발생:', error);
     // 기본 키워드 사용
+    POPULAR_KEYWORDS = [
+      "대선 사전투표",
+      "이준석 발언 파문",
+      "김문수와 이재명의 유세",
+      "상호관세 부과 일시 복원",
+      "해군 초계기 추락 사고",
+      "경제 성장률 전망",
+      "기준금리 인하 가능성",
+      "투표 용지 관리 부실 사고",
+      "대선 후보들의 막판 유세",
+      "트럼프 대통령의 상호관세 관련 법적 논란"
+    ];
     initializeKeywords();
     updateAnalysisButton();
   }
@@ -207,7 +218,7 @@ function scrollToKeywords() {
 }
 
 // 분석 시작
-function startAnalysis() {
+async function startAnalysis() {
   if (selectedKeywords.length === 0) return;
   
   // 결과 페이지로 이동
@@ -220,14 +231,56 @@ function startAnalysis() {
   document.getElementById("loading-indicator").style.display = "flex";
   document.getElementById("analysis-results").style.display = "none";
   
-  // 분석 시뮬레이션 (실제로는 API 호출)
-  setTimeout(() => {
+  try {
+    // API 호출
+    const response = await fetch(`${API_URLS.ARTICLE_SUMMARY}?keyword=${encodeURIComponent(selectedKeywords[0])}`);
+    if (!response.ok) throw new Error('API 요청 실패');
+    
+    const data = await response.json();
+    
+    // 로딩 숨기기
     document.getElementById("loading-indicator").style.display = "none";
     document.getElementById("analysis-results").style.display = "flex";
     
-    // 결과 데이터 생성 및 표시
-    generateResults();
-  }, 2000);
+    // 결과 데이터 표시
+    if (data && data.summaries) {
+      // 기사 요약 표시
+      const container = document.getElementById("article-summaries");
+      container.innerHTML = "";
+      
+      data.summaries.forEach(article => {
+        const articleElement = document.createElement("div");
+        articleElement.className = "article";
+        articleElement.innerHTML = `
+          <div class="article-header">
+            <h3 class="article-title">${article.title}</h3>
+            <a href="${article.url}" class="article-link" target="_blank" rel="noopener noreferrer">
+              원문 ↗
+            </a>
+          </div>
+          <div class="article-meta">
+            <span class="source">${article.source}</span>
+            <span class="separator">•</span>
+            <span class="date">${article.date}</span>
+          </div>
+          <p class="article-summary">${article.summary}</p>
+        `;
+        container.appendChild(articleElement);
+      });
+      
+      // 감정 분석 업데이트
+      if (data.sentiment) {
+        updateSentimentAnalysis(data.sentiment);
+      }
+    }
+  } catch (error) {
+    console.error('분석 중 에러 발생:', error);
+    alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+    
+    // 로딩 숨기기
+    document.getElementById("loading-indicator").style.display = "none";
+    document.getElementById("analysis-results").style.display = "flex";
+  }
 }
 
 // 결과 키워드 업데이트
@@ -243,105 +296,22 @@ function updateResultKeywords() {
   });
 }
 
-// 결과 생성
-function generateResults() {
-  // 기사 요약 생성
-  generateArticleSummaries();
-  
-  // 여론 분석 업데이트
-  updateSentimentAnalysis();
-  
-  // 인사이트 생성
-  generateInsights();
-}
-
-// 기사 요약 생성
-function generateArticleSummaries() {
-  const container = document.getElementById("article-summaries");
-  container.innerHTML = "";
-  
-  let allArticles = [];
-  
-  // 선택된 키워드에 대한 기사 수집
-  selectedKeywords.forEach(keyword => {
-    if (MOCK_DATA[keyword]) {
-      allArticles = allArticles.concat(MOCK_DATA[keyword].articles);
-    } else {
-      // 샘플 데이터에 없는 키워드는 기본 데이터 생성
-      allArticles.push({
-        id: Math.random(),
-        title: `${keyword}에 관한 최신 동향`,
-        source: "테크 뉴스",
-        date: "2025-05-28",
-        summary: `${keyword} 분야는 최근 급속도로 발전하고 있으며, 다양한 산업에 영향을 미치고 있습니다.`,
-        url: "https://example.com/article",
-      });
-    }
-  });
-  
-  // 기사 요약 렌더링
-  allArticles.forEach(article => {
-    const articleElement = document.createElement("div");
-    articleElement.className = "article";
-    articleElement.innerHTML = `
-      <div class="article-header">
-        <h3 class="article-title">${article.title}</h3>
-        <a href="${article.url}" class="article-link" target="_blank" rel="noopener noreferrer">
-          원문 ↗
-        </a>
-      </div>
-      <div class="article-meta">
-        <span class="source">${article.source}</span>
-        <span class="separator">•</span>
-        <span class="date">${article.date}</span>
-      </div>
-      <p class="article-summary">${article.summary}</p>
-    `;
-    container.appendChild(articleElement);
-  });
-}
-
 // 여론 분석 업데이트
-function updateSentimentAnalysis() {
-  // 평균 감정 분석 계산
-  let totalPositive = 0;
-  let totalNeutral = 0;
-  let totalNegative = 0;
-  let count = 0;
-  
-  selectedKeywords.forEach(keyword => {
-    if (MOCK_DATA[keyword]) {
-      totalPositive += MOCK_DATA[keyword].sentiment.positive;
-      totalNeutral += MOCK_DATA[keyword].sentiment.neutral;
-      totalNegative += MOCK_DATA[keyword].sentiment.negative;
-      count++;
-    } else {
-      // 기본 데이터
-      totalPositive += 60;
-      totalNeutral += 30;
-      totalNegative += 10;
-      count++;
-    }
-  });
-  
-  const avgPositive = Math.round(totalPositive / count);
-  const avgNeutral = Math.round(totalNeutral / count);
-  const avgNegative = Math.round(totalNegative / count);
-  
+function updateSentimentAnalysis(sentiment) {
   // 퍼센티지 업데이트
-  document.querySelector(".sentiment-box.positive .percentage").textContent = `${avgPositive}%`;
-  document.querySelector(".sentiment-box.neutral .percentage").textContent = `${avgNeutral}%`;
-  document.querySelector(".sentiment-box.negative .percentage").textContent = `${avgNegative}%`;
+  document.querySelector(".sentiment-box.positive .percentage").textContent = `${sentiment.positive}%`;
+  document.querySelector(".sentiment-box.neutral .percentage").textContent = `${sentiment.neutral}%`;
+  document.querySelector(".sentiment-box.negative .percentage").textContent = `${sentiment.negative}%`;
   
   // 차트 업데이트
-  document.querySelector(".bar.positive").style.width = `${avgPositive}%`;
-  document.querySelector(".bar.positive").textContent = avgPositive > 10 ? `${avgPositive}%` : "";
+  document.querySelector(".bar.positive").style.width = `${sentiment.positive}%`;
+  document.querySelector(".bar.positive").textContent = sentiment.positive > 10 ? `${sentiment.positive}%` : "";
   
-  document.querySelector(".bar.neutral").style.width = `${avgNeutral}%`;
-  document.querySelector(".bar.neutral").textContent = avgNeutral > 10 ? `${avgNeutral}%` : "";
+  document.querySelector(".bar.neutral").style.width = `${sentiment.neutral}%`;
+  document.querySelector(".bar.neutral").textContent = sentiment.neutral > 10 ? `${sentiment.neutral}%` : "";
   
-  document.querySelector(".bar.negative").style.width = `${avgNegative}%`;
-  document.querySelector(".bar.negative").textContent = avgNegative > 10 ? `${avgNegative}%` : "";
+  document.querySelector(".bar.negative").style.width = `${sentiment.negative}%`;
+  document.querySelector(".bar.negative").textContent = sentiment.negative > 10 ? `${sentiment.negative}%` : "";
 }
 
 // 인사이트 생성

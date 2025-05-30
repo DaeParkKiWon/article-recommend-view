@@ -8,7 +8,7 @@ const API_ENDPOINTS = {
 // API 요청 함수들
 async function fetchArticleSummary(keyword) {
   try {
-    const response = await fetch(`${API_ENDPOINTS.ARTICLE_SUMMARY}?keyword=${encodeURIComponent(keyword)}`);
+    const response = await fetch(`${API_URLS.ARTICLE_SUMMARY}?keyword=${encodeURIComponent(keyword)}`);
     if (!response.ok) throw new Error('기사 요약 API 요청 실패');
     return await response.json();
   } catch (error) {
@@ -19,7 +19,7 @@ async function fetchArticleSummary(keyword) {
 
 async function fetchSentimentAnalysis(keyword) {
   try {
-    const response = await fetch(`${API_ENDPOINTS.SENTIMENT_ANALYSIS}?keyword=${encodeURIComponent(keyword)}`);
+    const response = await fetch(`${API_URLS.SENTIMENT_ANALYSIS}?keyword=${encodeURIComponent(keyword)}`);
     if (!response.ok) throw new Error('민심 분석 API 요청 실패');
     return await response.json();
   } catch (error) {
@@ -30,7 +30,7 @@ async function fetchSentimentAnalysis(keyword) {
 
 async function fetchKeywords() {
   try {
-    const response = await fetch(API_ENDPOINTS.KEYWORDS);
+    const response = await fetch(API_URLS.KEYWORDS);
     if (!response.ok) throw new Error('키워드 API 요청 실패');
     return await response.json();
   } catch (error) {
@@ -112,45 +112,54 @@ function generateArticleSummaries(articleData) {
   const container = document.getElementById("article-summaries");
   container.innerHTML = "";
   
-  articleData.articles.forEach(article => {
-    const articleElement = document.createElement("div");
-    articleElement.className = "article";
-    articleElement.innerHTML = `
-      <div class="article-header">
-        <h3 class="article-title">${article.title}</h3>
-        <a href="${article.url}" class="article-link" target="_blank" rel="noopener noreferrer">
-          원문 ↗
+  // 요약 내용 표시
+  const summaryElement = document.createElement("div");
+  summaryElement.className = "article";
+  summaryElement.innerHTML = `
+    <div class="article-header">
+      <h3 class="article-title">${articleData.keyword} 관련 요약</h3>
+    </div>
+    <p class="article-summary">${articleData.summary}</p>
+    <div class="article-meta">
+      <span class="source">관련 기사 링크</span>
+    </div>
+    <div class="article-links">
+      ${articleData.postUrl.split('\n').map(url => `
+        <a href="${url}" class="article-link" target="_blank" rel="noopener noreferrer">
+          ${url} ↗
         </a>
-      </div>
-      <div class="article-meta">
-        <span class="source">${article.source}</span>
-        <span class="separator">•</span>
-        <span class="date">${article.date}</span>
-      </div>
-      <p class="article-summary">${article.summary}</p>
-    `;
-    container.appendChild(articleElement);
-  });
+      `).join('<br>')}
+    </div>
+  `;
+  container.appendChild(summaryElement);
 }
 
 // 여론 분석 업데이트
 function updateSentimentAnalysis(sentimentData) {
-  const { positive, neutral, negative } = sentimentData;
+  // "긍정: 15%, 중립: 40%, 부정: 45%" 형식의 문자열을 파싱
+  const sentimentText = sentimentData.publicOpinion;
+  const matches = sentimentText.match(/긍정: (\d+)%, 중립: (\d+)%, 부정: (\d+)%/);
   
-  // 퍼센티지 업데이트
-  document.querySelector(".sentiment-box.positive .percentage").textContent = `${positive}%`;
-  document.querySelector(".sentiment-box.neutral .percentage").textContent = `${neutral}%`;
-  document.querySelector(".sentiment-box.negative .percentage").textContent = `${negative}%`;
-  
-  // 차트 업데이트
-  document.querySelector(".bar.positive").style.width = `${positive}%`;
-  document.querySelector(".bar.positive").textContent = positive > 10 ? `${positive}%` : "";
-  
-  document.querySelector(".bar.neutral").style.width = `${neutral}%`;
-  document.querySelector(".bar.neutral").textContent = neutral > 10 ? `${neutral}%` : "";
-  
-  document.querySelector(".bar.negative").style.width = `${negative}%`;
-  document.querySelector(".bar.negative").textContent = negative > 10 ? `${negative}%` : "";
+  if (matches) {
+    const positive = parseInt(matches[1]);
+    const neutral = parseInt(matches[2]);
+    const negative = parseInt(matches[3]);
+    
+    // 퍼센티지 업데이트
+    document.querySelector(".sentiment-box.positive .percentage").textContent = `${positive}%`;
+    document.querySelector(".sentiment-box.neutral .percentage").textContent = `${neutral}%`;
+    document.querySelector(".sentiment-box.negative .percentage").textContent = `${negative}%`;
+    
+    // 차트 업데이트
+    document.querySelector(".bar.positive").style.width = `${positive}%`;
+    document.querySelector(".bar.positive").textContent = positive > 10 ? `${positive}%` : "";
+    
+    document.querySelector(".bar.neutral").style.width = `${neutral}%`;
+    document.querySelector(".bar.neutral").textContent = neutral > 10 ? `${neutral}%` : "";
+    
+    document.querySelector(".bar.negative").style.width = `${negative}%`;
+    document.querySelector(".bar.negative").textContent = negative > 10 ? `${negative}%` : "";
+  }
 }
 
 // 인사이트 생성

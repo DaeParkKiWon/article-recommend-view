@@ -243,3 +243,21 @@
     gap: 0.5rem;
   }
 }
+
+.article-links {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.article-links .article-link {
+  color: var(--primary);
+  font-size: 0.875rem;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.article-links .article-link:hover {
+  text-decoration: underline;
+}

@@ -509,3 +509,13 @@ p {
     grid-template-columns: 1fr;
   }
 }
+
+.keyword-meta {
+  margin-bottom: 0.75rem;
+}
+
+.date-text {
+  font-size: 0.875rem;
+  color: var(--neutral-500);
+  font-style: italic;
+}
